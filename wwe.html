@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WWE Wrestling Arena</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+            color: white;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(45deg, #ff6b00, #ff8500);
+            padding: 1rem;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .nav {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+
+        .nav-btn {
+            padding: 0.8rem 2rem;
+            background: #333;
+            border: none;
+            color: white;
+            cursor: pointer;
+            border-radius: 25px;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        .nav-btn:hover, .nav-btn.active {
+            background: #ff6b00;
+            transform: translateY(-2px);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .section {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .wrestler-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .wrestler-card {
+            background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+            transition: transform 0.3s;
+            border: 2px solid #333;
+        }
+
+        .wrestler-card:hover {
+            transform: translateY(-5px);
+            border-color: #ff6b00;
+        }
+
+        .wrestler-avatar {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(45deg, #ff6b00, #ff8500);
+            border-radius: 50%;
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .wrestler-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+        }
+
+        .stat {
+            background: #333;
+            padding: 0.5rem;
+            border-radius: 5px;
+        }
+
+        .fight-arena {
+            background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        .fighter-selection {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 2rem;
+            align-items: center;
+            margin: 2rem 0;
+        }
+
+        .fighter-select {
+            background: #333;
+            border: 2px solid #ff6b00;
+            border-radius: 10px;
+            padding: 1rem;
+        }
+
+        .vs-text {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #ff6b00;
+        }
+
+        .fight-btn {
+            background: linear-gradient(45deg, #ff6b00, #ff8500);
+            color: white;
+            border: none;
+            padding: 1rem 3rem;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .fight-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(255, 107, 0, 0.3);
+        }
+
+        .fight-result {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: #333;
+            border-radius: 10px;
+            border-left: 5px solid #ff6b00;
+        }
+
+        .match-list {
+            display: grid;
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .match-card {
+            background: #333;
+            padding: 1.5rem;
+            border-radius: 10px;
+            border-left: 5px solid #ff6b00;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            align-items: center;
+        }
+
+        .match-info h3 {
+            color: #ff6b00;
+            margin-bottom: 0.5rem;
+        }
+
+        .watch-btn {
+            background: #ff6b00;
+            color: white;
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .watch-btn:hover {
+            background: #ff8500;
+        }
+
+        .health-bar {
+            width: 100%;
+            height: 20px;
+            background: #333;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 0.5rem 0;
+        }
+
+        .health-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff0000, #ffff00, #00ff00);
+            transition: width 0.5s ease;
+        }
+
+        .commentary {
+            background: #1a1a1a;
+            padding: 1rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            border: 1px solid #444;
+            font-style: italic;
+        }
+
+        select {
+            background: #444;
+            color: white;
+            border: 1px solid #666;
+            padding: 0.5rem;
+            border-radius: 5px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🏆 WWE WRESTLING ARENA 🏆</h1>
+        <div class="nav">
+            <button class="nav-btn active" onclick="showSection('roster')">Roster</button>
+            <button class="nav-btn" onclick="showSection('fight')">Fight</button>
+            <button class="nav-btn" onclick="showSection('matches')">Watch Matches</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Roster Section -->
+        <div id="roster" class="section active">
+            <h2>🥊 Wrestler Roster</h2>
+            <div class="wrestler-grid" id="wrestlerGrid"></div>
+        </div>
+
+        <!-- Fight Section -->
+        <div id="fight" class="section">
+            <h2>⚡ Fight Arena</h2>
+            <div class="fight-arena">
+                <div class="fighter-selection">
+                    <div class="fighter-select">
+                        <h3>Fighter 1</h3>
+                        <select id="fighter1Select"></select>
+                        <div class="health-bar">
+                            <div id="health1" class="health-fill" style="width: 100%"></div>
+                        </div>
+                    </div>
+                    <div class="vs-text">VS</div>
+                    <div class="fighter-select">
+                        <h3>Fighter 2</h3>
+                        <select id="fighter2Select"></select>
+                        <div class="health-bar">
+                            <div id="health2" class="health-fill" style="width: 100%"></div>
+                        </div>
+                    </div>
+                </div>
+                <button class="fight-btn" onclick="startFight()">START FIGHT!</button>
+                <div id="fightResult" class="fight-result" style="display: none;"></div>
+                <div id="commentary" class="commentary" style="display: none;"></div>
+            </div>
+        </div>
+
+        <!-- Matches Section -->
+        <div id="matches" class="section">
+            <h2>📺 Watch Wrestling Matches</h2>
+            <div class="match-list" id="matchList"></div>
+        </div>
+    </div>
+
+    <script>
+        const wrestlers = [
+            {
+                name: "John Cena",
+                nickname: "The Cenation Leader",
+                strength: 95,
+                speed: 85,
+                technique: 90,
+                charisma: 100,
+                finisher: "AA (Attitude Adjustment)",
+                wins: 16,
+                losses: 13
+            },
+            {
+                name: "The Great Khali",
+                nickname: "The Punjabi Giant",
+                strength: 100,
+                speed: 60,
+                technique: 70,
+                charisma: 80,
+                finisher: "Khali Vice Grip",
+                wins: 15,
+                losses: 8
+            },
+            {
+                name: "The Undertaker",
+                nickname: "The Deadman",
+                strength: 90,
+                speed: 75,
+                technique: 95,
+                charisma: 98,
+                finisher: "Tombstone Piledriver",
+                wins: 25,
+                losses: 2
+            },
+            {
+                name: "The Rock",
+                nickname: "The People's Champion",
+                strength: 88,
+                speed: 90,
+                technique: 85,
+                charisma: 100,
+                finisher: "Rock Bottom",
+                wins: 20,
+                losses: 5
+            },
+            {
+                name: "Stone Cold",
+                nickname: "Texas Rattlesnake",
+                strength: 85,
+                speed: 88,
+                technique: 92,
+                charisma: 95,
+                finisher: "Stone Cold Stunner",
+                wins: 18,
+                losses: 7
+            },
+            {
+                name: "Hulk Hogan",
+                nickname: "The Hulkster",
+                strength: 90,
+                speed: 70,
+                technique: 80,
+                charisma: 92,
+                finisher: "Leg Drop",
+                wins: 22,
+                losses: 6
+            }
+        ];
+
+        const matchHistory = [
+            { fighter1: "John Cena", fighter2: "The Great Khali", winner: "John Cena", type: "Championship Match" },
+            { fighter1: "The Undertaker", fighter2: "The Rock", winner: "The Undertaker", type: "Hell in a Cell" },
+            { fighter1: "Stone Cold", fighter2: "Hulk Hogan", winner: "Stone Cold", type: "No Holds Barred" },
+            { fighter1: "John Cena", fighter2: "The Undertaker", winner: "The Undertaker", type: "WrestleMania" },
+            { fighter1: "The Great Khali", fighter2: "The Rock", winner: "The Rock", type: "Royal Rumble" }
+        ];
+
+        let currentFight = null;
+
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Remove active class from all nav buttons
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Add active class to clicked nav button
+            event.target.classList.add('active');
+        }
+
+        function initializeRoster() {
+            const grid = document.getElementById('wrestlerGrid');
+            grid.innerHTML = '';
+            
+            wrestlers.forEach(wrestler => {
+                const card = document.createElement('div');
+                card.className = 'wrestler-card';
+                card.innerHTML = `
+                    <div class="wrestler-avatar">${wrestler.name.charAt(0)}</div>
+                    <h3>${wrestler.name}</h3>
+                    <p style="color: #ff6b00; margin-bottom: 1rem;">"${wrestler.nickname}"</p>
+                    <div class="wrestler-stats">
+                        <div class="stat">💪 STR: ${wrestler.strength}</div>
+                        <div class="stat">⚡ SPD: ${wrestler.speed}</div>
+                        <div class="stat">🎯 TEC: ${wrestler.technique}</div>
+                        <div class="stat">⭐ CHA: ${wrestler.charisma}</div>
+                    </div>
+                    <p><strong>Finisher:</strong> ${wrestler.finisher}</p>
+                    <p><strong>Record:</strong> ${wrestler.wins}W - ${wrestler.losses}L</p>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function initializeFightSelects() {
+            const select1 = document.getElementById('fighter1Select');
+            const select2 = document.getElementById('fighter2Select');
+            
+            [select1, select2].forEach(select => {
+                select.innerHTML = '<option value="">Select a wrestler...</option>';
+                wrestlers.forEach((wrestler, index) => {
+                    const option = document.createElement('option');
+                    option.value = index;
+                    option.textContent = wrestler.name;
+                    select.appendChild(option);
+                });
+            });
+        }
+
+        function initializeMatches() {
+            const matchList = document.getElementById('matchList');
+            matchList.innerHTML = '';
+            
+            matchHistory.forEach((match, index) => {
+                const matchCard = document.createElement('div');
+                matchCard.className = 'match-card';
+                matchCard.innerHTML = `
+                    <div class="match-info">
+                        <h3>${match.type}</h3>
+                        <p>${match.fighter1} vs ${match.fighter2}</p>
+                        <p><strong>Winner:</strong> <span style="color: #ff6b00;">${match.winner}</span></p>
+                    </div>
+                    <button class="watch-btn" onclick="watchMatch(${index})">Watch Replay</button>
+                `;
+                matchList.appendChild(matchCard);
+            });
+        }
+
+        function startFight() {
+            const fighter1Index = document.getElementById('fighter1Select').value;
+            const fighter2Index = document.getElementById('fighter2Select').value;
+            
+            if (!fighter1Index || !fighter2Index) {
+                alert('Please select both fighters!');
+                return;
+            }
+            
+            if (fighter1Index === fighter2Index) {
+                alert('Wrestlers cannot fight themselves!');
+                return;
+            }
+
+            const fighter1 = wrestlers[fighter1Index];
+            const fighter2 = wrestlers[fighter2Index];
+            
+            currentFight = {
+                fighter1: {...fighter1, health: 100},
+                fighter2: {...fighter2, health: 100}
+            };
+
+            simulateFight(currentFight);
+        }
+
+        function simulateFight(fight) {
+            const commentary = document.getElementById('commentary');
+            const result = document.getElementById('fightResult');
+            
+            commentary.style.display = 'block';
+            commentary.innerHTML = `🎤 "Ladies and gentlemen, we have ${fight.fighter1.name} facing off against ${fight.fighter2.name}!"`;
+            
+            let round = 1;
+            const maxRounds = 10;
+            
+            const fightInterval = setInterval(() => {
+                // Calculate damage based on stats
+                const f1Attack = Math.random() * (fight.fighter1.strength + fight.fighter1.technique) / 2;
+                const f2Attack = Math.random() * (fight.fighter2.strength + fight.fighter2.technique) / 2;
+                
+                const f1Damage = Math.max(0, f1Attack - (fight.fighter2.speed / 10));
+                const f2Damage = Math.max(0, f2Attack - (fight.fighter1.speed / 10));
+                
+                fight.fighter1.health -= f2Damage;
+                fight.fighter2.health -= f1Damage;
+                
+                // Update health bars
+                document.getElementById('health1').style.width = Math.max(0, fight.fighter1.health) + '%';
+                document.getElementById('health2').style.width = Math.max(0, fight.fighter2.health) + '%';
+                
+                // Commentary
+                const commentaries = [
+                    `💥 ${fight.fighter1.name} lands a devastating blow!`,
+                    `⚡ ${fight.fighter2.name} counters with a powerful move!`,
+                    `🔥 The crowd is going wild!`,
+                    `💪 Both wrestlers showing incredible strength!`,
+                    `🎯 What technique from both competitors!`
+                ];
+                
+                commentary.innerHTML = commentaries[Math.floor(Math.random() * commentaries.length)];
+                
+                // Check for winner
+                if (fight.fighter1.health <= 0 || fight.fighter2.health <= 0 || round >= maxRounds) {
+                    clearInterval(fightInterval);
+                    
+                    let winner, loser;
+                    if (fight.fighter1.health <= 0) {
+                        winner = fight.fighter2;
+                        loser = fight.fighter1;
+                    } else if (fight.fighter2.health <= 0) {
+                        winner = fight.fighter1;
+                        loser = fight.fighter2;
+                    } else {
+                        // Judge's decision based on remaining health
+                        if (fight.fighter1.health > fight.fighter2.health) {
+                            winner = fight.fighter1;
+                            loser = fight.fighter2;
+                        } else {
+                            winner = fight.fighter2;
+                            loser = fight.fighter1;
+                        }
+                    }
+                    
+                    result.style.display = 'block';
+                    result.innerHTML = `
+                        <h3>🏆 WINNER: ${winner.name}!</h3>
+                        <p>${winner.name} defeats ${loser.name} with the ${winner.finisher}!</p>
+                        <p>🎉 The crowd erupts as ${winner.name} celebrates their victory!</p>
+                    `;
+                    
+                    commentary.innerHTML = `🎤 "And your winner... ${winner.name}! What an incredible match!"`;
+                    
+                    // Reset health bars after 3 seconds
+                    setTimeout(() => {
+                        document.getElementById('health1').style.width = '100%';
+                        document.getElementById('health2').style.width = '100%';
+                    }, 3000);
+                }
+                
+                round++;
+            }, 1500);
+        }
+
+        function watchMatch(matchIndex) {
+            const match = matchHistory[matchIndex];
+            alert(`🎬 Now watching: ${match.type}\n\n${match.fighter1} vs ${match.fighter2}\n\nWinner: ${match.winner}\n\nThis was an epic battle that had the crowd on their feet! The match featured incredible athleticism and signature moves from both competitors.`);
+        }
+
+        // Initialize the website
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeRoster();
+            initializeFightSelects();
+            initializeMatches();
+        });
+    </script>
+</body>
+</html>
